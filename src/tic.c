@@ -459,6 +459,7 @@ void tic_close(tic_mem* memory)
 
 	machine->state.initialized = false;
 
+	closeWren(machine);
 	closeJavascript(machine);
 	closeLua(machine);
 	blip_delete(machine->blip);
@@ -1338,10 +1339,16 @@ static bool isJavascript(const char* code)
 	return compareMetatag(code, "script", "js") || compareMetatag(code, "script", "javascript");
 }
 
+static bool isWren(const char* code)
+{
+	return compareMetatag(code, "script", "wren");
+}
+
 static tic_script_lang api_get_script(tic_mem* memory)
 {
 	if(isMoonscript(memory->cart.code.data)) return tic_script_moon;
 	if(isJavascript(memory->cart.code.data)) return tic_script_js;
+	if(isWren(memory->cart.code.data)) return tic_script_wren;
 	return tic_script_lua;
 }
 
@@ -1462,22 +1469,54 @@ static void api_tick(tic_mem* memory, tic_tick_data* data)
 
 				memory->script = tic_script_js;
 			}
+			else if(isWren(code))
+			{
+				if(!initWren(machine, code))
+					return;
+
+				memory->script = tic_script_wren;
+			}
 			else if(!initLua(machine, code))
+			{
 				return;
+			}
 		}
 
-		// TODO: possible memory leak if script not initialozed
+		// TODO: possible memory leak if script not initialized
 		if(code != machine->memory.cart.code.data)
 			free(code);
 
-		machine->state.scanline = memory->script == tic_script_js ? callJavascriptScanline : callLuaScanline;
+		switch(memory->script) {
+			case tic_script_js :
+				machine->state.scanline = callJavascriptScanline;
+			   	break;
+			case tic_script_lua :
+				machine->state.scanline = callLuaScanline;
+			  	break;
+			case tic_script_wren :
+				machine->state.scanline = callWrenScanline;
+			   	break;
+			default :
+			   	break;
+	   }
 
 		machine->state.initialized = true;
 	}
 
-	memory->script == tic_script_js
-		? callJavascriptTick(machine)
-		: callLuaTick(machine);
+	switch(memory->script) {
+		case tic_script_js :
+			callJavascriptTick(machine);
+		   	break;
+		case tic_script_lua :
+			callLuaTick(machine);
+		   	break;
+		case tic_script_wren :
+			callWrenTick(machine);
+		   	break;
+		default :
+			break;
+   }
+
 }
 
 static void api_scanline(tic_mem* memory, s32 row)

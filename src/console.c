@@ -67,6 +67,7 @@ static const char CartExt[] = ".tic";
 static const char DefaultLuaTicPath[] = TIC_LOCAL "default.tic";
 static const char DefaultMoonTicPath[] = TIC_LOCAL "default_moon.tic";
 static const char DefaultJSTicPath[] = TIC_LOCAL "default_js.tic";
+static const char DefaultWrenTicPath[] = TIC_LOCAL "default_wren.tic";
 
 static const char* getRomName(const char* name)
 {
@@ -406,7 +407,10 @@ static void* getDemoCart(Console* console, tic_script_lang script, s32* size)
 			strcpy(path, DefaultMoonTicPath);
 			break;
 		case tic_script_js:
-		strcpy(path, DefaultJSTicPath);
+			strcpy(path, DefaultJSTicPath);
+			break;
+		case tic_script_wren:
+			strcpy(path, DefaultWrenTicPath);
 			break;
 		}
 
@@ -474,6 +478,8 @@ static void onConsoleLoadDemoCommandConfirmed(Console* console, const char* para
 		data = getDemoCart(console, tic_script_moon, &size);
 	else if(strcmp(param, DefaultJSTicPath) == 0)
 		data = getDemoCart(console, tic_script_js, &size);
+	else if(strcmp(param, DefaultWrenTicPath) == 0)
+		data = getDemoCart(console, tic_script_wren, &size);
 
 	const char* name = getRomName(param);
 
@@ -633,6 +639,8 @@ static void onConsoleNewCommandConfirmed(Console* console, const char* param)
 			loadDemo(console, tic_script_moon);
 		else if(strcmp(param, "js") == 0 || strcmp(param, "javascript") == 0)
 			loadDemo(console, tic_script_js);
+		else if(strcmp(param, "wren"))
+			loadDemo(console, tic_script_wren);
 		else
 		{
 			printError(console, "\nunknown parameter: ");
@@ -881,6 +889,10 @@ static void onConsoleConfigCommand(Console* console, const char* param)
 	else if(strcmp(param, "default js") == 0)
 	{
 		onConsoleLoadDemoCommand(console, DefaultJSTicPath);
+	}
+	else if(strcmp(param, "default wren") == 0)
+	{
+		onConsoleLoadDemoCommand(console, DefaultWrenTicPath);
 	}
 	else
 	{

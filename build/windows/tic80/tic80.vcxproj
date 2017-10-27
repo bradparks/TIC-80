@@ -27,8 +27,12 @@
     <ClCompile Include="..\..\..\src\tic.c" />
     <ClCompile Include="..\..\..\src\tic80.c" />
     <ClCompile Include="..\..\..\src\tools.c" />
+    <ClCompile Include="..\..\..\src\wrenapi.c" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\..\..\3rd-party\wren-0.1.0\util\vs2017\lib\wren_lib.vcxproj">
+      <Project>{d7cc5189-c399-ac94-ecb2-9a3cd8dee122}</Project>
+    </ProjectReference>
     <ProjectReference Include="..\gif\gif.vcxproj">
       <Project>{6ea9d998-7557-4aed-abfc-142f9960c9b6}</Project>
     </ProjectReference>
@@ -101,6 +105,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
+    <OutDir>$(SolutionDir)$(Platform)\$(Configuration)\</OutDir>
+    <IntDir>$(Platform)\$(Configuration)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -112,7 +118,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>TIC80_SHARED;WIN32;_DEBUG;_WINDOWS;_USRDLL;TIC80_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif;..\..\..\include\wren</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -127,7 +133,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>TIC80_SHARED;_DEBUG;_WINDOWS;_USRDLL;TIC80_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif;..\..\..\include\wren</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -144,7 +150,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>TIC80_SHARED;WIN32;NDEBUG;_WINDOWS;_USRDLL;TIC80_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif;..\..\..\include\wren</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -163,7 +169,7 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>TIC80_SHARED;NDEBUG;_WINDOWS;_USRDLL;TIC80_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\include\tic80;..\..\..\include\lua;..\..\..\include\gif;..\..\..\include\wren</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>

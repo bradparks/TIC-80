@@ -309,6 +309,20 @@ static void highlightJsKeywords(Code* code, u8* color)
 	highlightWords(text, color, JsKeywords, COUNT_OF(JsKeywords), getConfig()->theme.code.keyword);
 }
 
+static void highlightWrenKeywords(Code* code, u8* color)
+{
+	const char* text = code->data;
+
+	static const char* const WrenKeywords [] =
+	{
+		"false", "true", "null", "break", "class", "construct", 
+		"else", "for", "foreign", "if", "import", "in", "is", 
+		"return", "static", "super", "var", "while", "this"
+	};
+
+	highlightWords(text, color, WrenKeywords, COUNT_OF(WrenKeywords), getConfig()->theme.code.keyword);
+}
+
 static void highlightApi(Code* code, u8* color)
 {
 	static const char* const ApiKeywords[] = API_KEYWORDS;
@@ -427,6 +441,15 @@ static void parseSyntaxColor(Code* code)
 	case tic_script_js:
 		highlightNonChars(code, color);
 		highlightJsKeywords(code, color);
+		highlightApi(code, color);
+		highlightNumbers(code, color);
+		highlightSigns(code, color);
+		highlightJsComments(code, color);
+		highlightStrings(code, code->data, color, '"');
+		break;
+	case tic_script_wren:
+		highlightNonChars(code, color);
+		highlightWrenKeywords(code, color);
 		highlightApi(code, color);
 		highlightNumbers(code, color);
 		highlightSigns(code, color);
@@ -1142,7 +1165,7 @@ static void commentLine(Code* code)
 	static char Comment[] = "-- ";
 	enum {Size = sizeof Comment-1};
 
-	strcpy(Comment, code->tic->api.get_script(code->tic) == tic_script_js ? "// " : "-- ");
+	strcpy(Comment, code->tic->api.get_script(code->tic) == tic_script_js || tic_script_wren ? "// " : "-- ");
 
 	char* line = getLine(code);
 
