@@ -6,6 +6,7 @@ RM= rm -f
 
 INCLUDES= \
 	-Iinclude/lua \
+	-Iinclude/wren \
 	-Iinclude/zlib \
 	-Iinclude/gif \
 	-Iinclude/sdl2 \
@@ -19,6 +20,7 @@ MINGW_LINKER_FLAGS= \
 	-lz \
 	-lgif \
 	-llua \
+	-lwren \
 	-lcomdlg32 \
 	-lws2_32 \
 	-mwindows
@@ -41,6 +43,7 @@ LINUX_LINKER_FLAGS= \
 	-D_GNU_SOURCE \
 	-lSDL2 \
 	-llua \
+	-lwren \
 	-ldl \
 	-lm \
 	-lpthread \
@@ -56,6 +59,7 @@ EMS_OPT= \
 	-Wno-typedef-redefinition \
 	-s USE_SDL=2 \
 	-s TOTAL_MEMORY=67108864 \
+	-s VERBOSE=0 \
 	--llvm-lto 1 \
 	--memory-init-file 0 \
 	--pre-js lib/emscripten/prejs.js
@@ -63,6 +67,7 @@ EMS_OPT= \
 EMS_LINKER_FLAGS= \
 	-Llib/emscripten \
 	-llua \
+	-lwren \
 	-lgif \
 	-lz
 
@@ -75,7 +80,7 @@ MACOSX_OPT= \
 MACOSX_LIBS= \
 	-Llib/macos \
 	-L/usr/local/lib \
-	-lSDL2 -lm -liconv -lobjc -llua -lz -lgif \
+	-lSDL2 -lm -liconv -lobjc -llua -lwren -lz -lgif \
 	-Wl,-framework,CoreAudio \
 	-Wl,-framework,AudioToolbox \
 	-Wl,-framework,ForceFeedback \
@@ -124,6 +129,7 @@ DEMO_ASSETS= \
 	bin/assets/font.tic.dat \
 	bin/assets/tetris.tic.dat \
 	bin/assets/jsdemo.tic.dat \
+	bin/assets/wrendemo.tic.dat \
 	bin/assets/luademo.tic.dat \
 	bin/assets/moondemo.tic.dat \
 	bin/assets/config.tic.dat
@@ -252,16 +258,19 @@ bin/jsapi.o: src/jsapi.c $(TIC80_H)
 bin/luaapi.o: src/luaapi.c $(TIC80_H)
 	$(CC) $< $(OPT) $(INCLUDES) -c -o $@
 
+bin/wrenapi.o: src/wrenapi.c $(TIC80_H)
+	$(CC) $< $(OPT) $(INCLUDES) -c -o $@
+
 bin/duktape.o: src/ext/duktape/duktape.c $(TIC80_H)
 	$(CC) $< $(OPT) $(INCLUDES) -c -o $@
 
-TIC80_SRC = src/tic80.c src/tic.c src/ext/blip_buf.c src/jsapi.c src/luaapi.c src/ext/duktape/duktape.c
-TIC80_O = bin/tic80.o bin/tic.o bin/tools.o bin/blip_buf.o bin/jsapi.o bin/luaapi.o bin/duktape.o bin/gif.o
+TIC80_SRC = src/tic80.c src/tic.c src/ext/blip_buf.c src/jsapi.c src/luaapi.c src/wrenapi.c src/ext/duktape/duktape.c
+TIC80_O = bin/tic80.o bin/tic.o bin/tools.o bin/blip_buf.o bin/jsapi.o bin/luaapi.o bin/wrenapi.o bin/duktape.o bin/gif.o
 TIC80_A = bin/libtic80.a
 TIC80_DLL = bin/tic80.dll
 
 $(TIC80_DLL): $(TIC80_O)
-	$(CC) $(OPT) -shared $(TIC80_O) -Llib/mingw -llua -lgif -Wl,--out-implib,$(TIC80_A) -o $@
+	$(CC) $(OPT) -shared $(TIC80_O) -Llib/mingw -llua -lwren -lgif -Wl,--out-implib,$(TIC80_A) -o $@
 
 emscripten:
 	$(EMS_CC) $(SOURCES) $(TIC80_SRC) $(SOURCES_EXT) $(OPT) $(INCLUDES) $(EMS_OPT) $(EMS_LINKER_FLAGS) -o build/html/tic.js
@@ -322,6 +331,9 @@ bin/assets/tetris.tic.dat: demos/tetris.tic
 	$(BIN2TXT) $< $@ -z
 
 bin/assets/jsdemo.tic.dat: demos/jsdemo.tic
+	$(BIN2TXT) $< $@ -z
+
+bin/assets/wrendemo.tic.dat: demos/wrendemo.tic
 	$(BIN2TXT) $< $@ -z
 
 bin/assets/luademo.tic.dat: demos/luademo.tic
