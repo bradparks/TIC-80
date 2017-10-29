@@ -325,7 +325,6 @@ static s32 lua_textri(lua_State* lua)
 	return 0;
 }
 
-
 static s32 lua_clip(lua_State* lua)
 {
 	s32 top = lua_gettop(lua);
@@ -345,7 +344,7 @@ static s32 lua_clip(lua_State* lua)
 
 		tic_mem* memory = (tic_mem*)getLuaMachine(lua);
 
-		memory->api.clip((tic_mem*)getLuaMachine(lua), x, y, w, h);
+		memory->api.clip(memory, x, y, w, h);
 	}
 	else luaL_error(lua, "invalid parameters, use clip(x,y,w,h) or clip()\n");
 
@@ -617,7 +616,7 @@ static s32 lua_map(lua_State* lua)
 
 	tic_mem* memory = (tic_mem*)getLuaMachine(lua);
 
-	memory->api.map((tic_mem*)getLuaMachine(lua), &memory->ram.gfx, x, y, w, h, sx, sy, chromakey, scale);
+	memory->api.map(memory, &memory->ram.gfx, x, y, w, h, sx, sy, chromakey, scale);
 
 	return 0;
 }

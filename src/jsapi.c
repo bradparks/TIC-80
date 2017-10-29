@@ -368,7 +368,7 @@ static duk_ret_t duk_map(duk_context* duk)
 
 	 	RemapData data = {duk, remap};
 
-	 	memory->api.remap((tic_mem*)getDukMachine(duk), &memory->ram.gfx, x, y, w, h, sx, sy, chromakey, scale, remapCallback, &data);
+	 	memory->api.remap(memory, &memory->ram.gfx, x, y, w, h, sx, sy, chromakey, scale, remapCallback, &data);
 	}
 
 	return 0;
