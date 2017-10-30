@@ -390,7 +390,7 @@ static void drawSheet(Map* map, s32 x, s32 y)
 
 	for(s32 j = 0, index = 0; j < rect.h; j += TIC_SPRITESIZE)
 		for(s32 i = 0; i < rect.w; i += TIC_SPRITESIZE, index++)
-			map->tic->api.sprite(map->tic, &map->tic->cart.gfx, index, x + i, y + j, NULL, 0);
+			map->tic->api.sprite(map->tic, &map->tic->cart.gfx, index, x + i, y + j, NULL, 0, 1, tic_no_flip, tic_no_rotate);
 
 	{
 		s32 bx = map->sheet.rect.x * TIC_SPRITESIZE - 1 + x;
@@ -463,7 +463,7 @@ static void drawTileCursor(Map* map)
 
 		for(s32 j = 0, ty=my; j < map->sheet.rect.h; j++, ty+=TIC_SPRITESIZE)
 			for(s32 i = 0, tx=mx; i < map->sheet.rect.w; i++, tx+=TIC_SPRITESIZE)
-				map->tic->api.sprite(map->tic, &map->tic->cart.gfx, (sx+i) + (sy+j) * SHEET_COLS, tx, ty, NULL, 0);					
+				map->tic->api.sprite(map->tic, &map->tic->cart.gfx, (sx+i) + (sy+j) * SHEET_COLS, tx, ty, NULL, 0, 1, tic_no_flip, tic_no_rotate);					
 	}
 
 	drawCursorPos(map, mx, my);
@@ -605,7 +605,7 @@ static void drawPasteData(Map* map)
 		
 		for(s32 j = 0; j < h; j++)
 			for(s32 i = 0; i < w; i++)
-				map->tic->api.sprite(map->tic, &map->tic->cart.gfx, data[i + j * w], mx + i*TIC_SPRITESIZE, my + j*TIC_SPRITESIZE, NULL, 0);
+				map->tic->api.sprite(map->tic, &map->tic->cart.gfx, data[i + j * w], mx + i*TIC_SPRITESIZE, my + j*TIC_SPRITESIZE, NULL, 0, 1, tic_no_flip, tic_no_rotate);
 	}
 }
 

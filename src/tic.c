@@ -275,9 +275,10 @@ static void drawMap(tic_machine* machine, const tic_gfx* src, s32 x, s32 y, s32 
 			
 			s32 index = mi + mj * TIC_MAP_WIDTH;
 			RemapResult tile = { *(src->map.data + index), tic_no_flip, tic_no_rotate };
-
-			if (remap)
+			
+			if (remap){
 				remap(data, mi, mj, &tile);
+			}
 
 			drawTile(machine, src->tiles + tile.index, ii, jj, &chromakey, 1, scale, tile.flip, tile.rotate);
 		}
@@ -930,9 +931,9 @@ static void api_textri(tic_mem* memory, s32 x1, s32 y1, s32 x2, s32 y2, s32 x3, 
 }
 
 
-static void api_sprite(tic_mem* memory, const tic_gfx* src, s32 index, s32 x, s32 y, u8* colors, s32 count)
+static void api_sprite(tic_mem* memory, const tic_gfx* src, s32 index, s32 x, s32 y, u8* colors, s32 count, s32 scale, tic_flip flip, tic_rotate rotate)
 {
-	drawSprite(memory, src, index, x, y, colors, count, 1, tic_no_flip, tic_no_rotate);
+	drawSprite(memory, src, index, x, y, colors, count, scale, flip, rotate);
 }
 
 static void api_map(tic_mem* memory, const tic_gfx* src, s32 x, s32 y, s32 width, s32 height, s32 sx, s32 sy, u8 chromakey, s32 scale)

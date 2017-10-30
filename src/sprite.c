@@ -902,7 +902,7 @@ static void drawSheet(Sprite* sprite, s32 x, s32 y)
 
 	for(s32 j = 0, index = (sprite->index - sprite->index % TIC_BANK_SPRITES); j < rect.h; j += TIC_SPRITESIZE)
 		for(s32 i = 0; i < rect.w; i += TIC_SPRITESIZE, index++)
-			sprite->tic->api.sprite(sprite->tic, &sprite->tic->cart.gfx, index, x + i, y + j, NULL, 0);
+			sprite->tic->api.sprite(sprite->tic, &sprite->tic->cart.gfx, index, x + i, y + j, NULL, 0, 1, tic_no_flip, tic_no_rotate);
 	{
 		s32 bx = getIndexPosX(sprite) + x - 1;
 		s32 by = getIndexPosY(sprite) + y - 1;

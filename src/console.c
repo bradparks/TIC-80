@@ -430,6 +430,11 @@ static void* getDemoCart(Console* console, tic_script_lang script, s32* size)
 		#include "../bin/assets/jsdemo.tic.dat"
 	};
 
+	static const u8 WrenDemoRom[] =
+	{
+		#include "../bin/assets/wrendemo.tic.dat"
+	};
+
 	static const u8 MoonDemoRom[] =
 	{
 		#include "../bin/assets/moondemo.tic.dat"
@@ -451,6 +456,10 @@ static void* getDemoCart(Console* console, tic_script_lang script, s32* size)
 	case tic_script_js:
 		demo = JsDemoRom;
 		romSize = sizeof JsDemoRom;
+		break;
+	case tic_script_wren:
+		demo = WrenDemoRom;
+		romSize = sizeof WrenDemoRom;
 		break;
 	}
 
