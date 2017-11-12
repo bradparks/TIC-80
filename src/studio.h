@@ -146,7 +146,7 @@ EditorMode getStudioMode();
 void exitStudio();
 u32 unzip(u8** dest, const u8* source, size_t size);
 
-void str2buf(const char* str, void* buf, bool flip);
+void str2buf(const char* str, s32 size, void* buf, bool flip);
 void toClipboard(const void* data, s32 size, bool flip);
 bool fromClipboard(void* data, s32 size, bool flip);
 
@@ -189,6 +189,8 @@ bool studioCartChanged();
 void playSystemSfx(s32 id);
 
 void runGameFromSurf();
+void gotoCode();
 void gotoSurf();
 void exitFromGameMenu();
 void runProject();
+bool processDoFile();
