@@ -37,90 +37,16 @@ static WrenHandle* scanline_handle;
 static bool loaded = false;
 
 static char const* tic_wren_api = "                         			                            \n"
-"System.importModule(\"random\")                         				                            \n"
-"var Rnd = System.getModuleVariable(\"random\", \"Random\")  			                            \n"
-"class Random {                                        					                            \n"
-"	static init_() {                                  					                            \n"
-"		__rnd = Rnd.new()                             					                            \n"
-"	}                                                 					                            \n"
-"	static seed() {__rnd.seed_()}                     					                            \n"
-"	static seed(n) {__rnd.seed_(n)}                   					                            \n"
-"	static int(){__rnd.int()}                         					                            \n"
-"	static int(end){__rnd.int(end)}                   					                            \n"
-"	static int(start, end){__rnd.int(start, end)}     					                            \n"
-"	static float(){__rnd.float()}                     					                            \n"
-"	static float(end){__rnd.float(end)}               					                            \n"
-"	static float(start, end){__rnd.float(start, end)} 					                            \n"
-"	static bool(){__rnd.float() < 0.5}                					                            \n"
-"	static bool(chance){__rnd.float() < chance}       					                            \n"
-"	static sign(){                                    					                            \n"
-"		if (__rnd.float() < 0.5) {                    					                            \n"
-"			return -1                                 					                            \n"
-"		}                                             					                            \n"
-"		return 1                                      					                            \n"
-"	}                                                 					                            \n"
-"	static sign(chance){                              					                            \n"
-"		if (__rnd.float() < chance) {                 					                            \n"
-"			return -1                                 					                            \n"
-"		}                                             					                            \n"
-"		return 1                                      					                            \n"
-"	}                                                 					                            \n"
-"	static bit(){                                     					                            \n"
-"		if (__rnd.float() < 0.5) {                    					                            \n"
-"			return 0                                  					                            \n"
-"		}                                             					                            \n"
-"		return 1                                      					                            \n"
-"	}                                                 					                            \n"
-"	static bit(chance){                               					                            \n"
-"		if (__rnd.float() < chance) {                 					                            \n"
-"			return 0                                  					                            \n"
-"		}                                             					                            \n"
-"		return 1                                      					                            \n"
-"	}                                                 					                            \n"
-"	static shuffle(list){__rnd.shuffle(list)}         			    	                            \n"
-"}                                                     		        	                            \n"
-"class Maths {                                                       	                            \n"
-"	static lerp( value, target, t ) {                               	                            \n"
-"		t = Maths.clamp(t, 0, 1)                                    	                            \n"
-"		return (value + t * (target - value))                       	                            \n"
-"	}                                                               	                            \n"
-"	static clamp(value, a, b) {                                     	                            \n"
-"		return ( value < a ) ? a : ( ( value > b ) ? b : value )    	                            \n"
-"	}                                                               	                            \n"
-"	static clamp_bottom(value, a, b) {                              	                            \n"
-"		return value < a ? a : value                                	                            \n"
-"	}                                                               	                            \n"
-"	static within_range(value, start_range, end_range) {            	                            \n"
-"		return value >= start_range && value <= end_range           	                            \n"
-"	}                                                               	                            \n"
-"	static sign( x ) {                                              	                            \n"
-"		return (x >= 0) ? 1 : -1                                    	                            \n"
-"	}                                                               	                            \n"
-"	static sign0( x ) {                                             	                            \n"
-"		return (x < 0) ? -1 : ((x > 0) ? 1 : 0)                     	                            \n"
-"	}                                                               	                            \n"
-"	static radians( degrees ) {                                     	                            \n"
-"		return degrees * 0.017453292519943 // degrees * _PI_OVER_180	                            \n"
-"	}                                                               	                            \n"
-"	static degrees( radians ) {                                     	                            \n"
-"		return radians * 57.295779513082 // degrees * _180_OVER_PI  	                            \n"
-"	}                                                               	                            \n"
-"}                                                                   	                            \n"
 "class Tic {                                                                                     	\n"
-"	foreign static map_width                                                                    	\n"
-"	foreign static map_height                                                                   	\n"
-"	foreign static spritesize                                                                   	\n"
 "	foreign static btn(id)                                                                      	\n"
 "	foreign static btnp(id, hold, period)                                                       	\n"
 "	foreign static mouse()                                                                      	\n"
-"	foreign static print__(v, x, y, color, fixed, scale)                                        	\n"
 "	foreign static font(text)                                                                   	\n"
 "	foreign static font(text, x, y)                                                             	\n"
 "	foreign static font(text, x, y, alpha_color)                                                	\n"
 "	foreign static font(text, x, y, alpha_color, w, h)                                          	\n"
 "	foreign static font(text, x, y, alpha_color, w, h, fixed)                                   	\n"
 "	foreign static font(text, x, y, alpha_color, w, h, fixed, scale)                            	\n"
-"	foreign static trace__(msg, color)                                                          	\n"
 "	foreign static spr(id)                                                                      	\n"
 "	foreign static spr(id, x, y)                                                                	\n"
 "	foreign static spr(id, x, y, alpha_color)                                                   	\n"
@@ -128,7 +54,6 @@ static char const* tic_wren_api = "                         			                 
 "	foreign static spr(id, x, y, alpha_color, scale, flip)                                      	\n"
 "	foreign static spr(id, x, y, alpha_color, scale, flip, rotate)                              	\n"
 "	foreign static spr(id, x, y, alpha_color, scale, flip, rotate, cell_width, cell_height)     	\n"
-"	foreign static spr__(id, x, y, alpha_color, scale, flip, rotate)                            	\n"
 "	foreign static map(cell_x, cell_y)                                                          	\n"
 "	foreign static map(cell_x, cell_y, cell_w, cell_h)                                          	\n"
 "	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y)                                    	\n"
@@ -137,7 +62,6 @@ static char const* tic_wren_api = "                         			                 
 "	foreign static mset(cell_x, cell_y)                                                             \n"
 "	foreign static mset(cell_x, cell_y, index)                                                      \n"
 "	foreign static mget(cell_x, cell_y)                                                             \n"
-"	foreign static mgeti__(index)                                                                   \n"
 "	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3)                           \n"
 "	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3, use_map)                  \n"
 "	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3, use_map, alpha_color)     \n"
@@ -173,6 +97,13 @@ static char const* tic_wren_api = "                         			                 
 "	foreign static time()                                                                           \n"
 "	foreign static sync()                                                                           \n"
 "	foreign static exit()                                                                           \n"
+"	foreign static map_width__                                                                    	\n"
+"	foreign static map_height__                                                                   	\n"
+"	foreign static spritesize__                                                                   	\n"
+"	foreign static print__(v, x, y, color, fixed, scale)                                        	\n"
+"	foreign static trace__(msg, color)                                                          	\n"
+"	foreign static spr__(id, x, y, alpha_color, scale, flip, rotate)                            	\n"
+"	foreign static mgeti__(index)                                                                   \n"
 "	static print(v) { Tic.print__(v.toString, 0, 0, 15, false, 1) }                             	\n"
 "	static print(v,x,y) { Tic.print__(v.toString, x, y, 15, false, 1) }                         	\n"
 "	static print(v,x,y,color) { Tic.print__(v.toString, x, y, color, false, 1) }                	\n"
@@ -181,9 +112,9 @@ static char const* tic_wren_api = "                         			                 
 "	static trace(v) { Tic.trace__(v.toString, 15) }                                             	\n"
 "	static trace(v,color) { Tic.trace__(v.toString, color) }                                    	\n"
 "	static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color, scale, remap) {               	\n"
-"		var map_w = Tic.map_width                                                               	\n"
-"		var map_h = Tic.map_height                                                              	\n"
-"		var size = Tic.spritesize * scale                                                       	\n"
+"		var map_w = Tic.map_width__                                                               	\n"
+"		var map_h = Tic.map_height__                                                              	\n"
+"		var size = Tic.spritesize__ * scale                                                       	\n"
 "		var jj = y                                                                              	\n"
 "		var ii = x                                                                              	\n"
 "		var flip = 0                                                                            	\n"
@@ -218,7 +149,6 @@ static char const* tic_wren_api = "                         			                 
 "	update(){}                                                                                  	\n"
 "	scanline(row){}                                                                             	\n"
 "}                                                                                               	\n"
-"Random.init_()                                                                                  	\n"
 "";
 
 static inline s32 getWrenNumber(WrenVM* vm, s32 index)
@@ -1051,15 +981,9 @@ static void wren_exit(WrenVM* vm)
 
 WrenForeignMethodFn foreignTicMethods(const char* signature){
 
-	if (strcmp(signature, "static Tic.map_width"                ) == 0) return wren_map_width;
-	if (strcmp(signature, "static Tic.map_height"               ) == 0) return wren_map_height;
-	if (strcmp(signature, "static Tic.spritesize"               ) == 0) return wren_spritesize;
-
 	if (strcmp(signature, "static Tic.btn(_)"                	) == 0) return wren_btn;
 	if (strcmp(signature, "static Tic.btnp(_,_,_)"              ) == 0) return wren_btnp;
 	if (strcmp(signature, "static Tic.mouse()"                	) == 0) return wren_mouse;
-
-	if (strcmp(signature, "static Tic.print__(_,_,_,_,_,_)"     ) == 0) return wren_print;
 
 	if (strcmp(signature, "static Tic.font(_)"	                ) == 0) return wren_font;
 	if (strcmp(signature, "static Tic.font(_,_,_)"	            ) == 0) return wren_font;
@@ -1068,8 +992,6 @@ WrenForeignMethodFn foreignTicMethods(const char* signature){
 	if (strcmp(signature, "static Tic.font(_,_,_,_,_,_,_)"	    ) == 0) return wren_font;
 	if (strcmp(signature, "static Tic.font(_,_,_,_,_,_,_,_)"	) == 0) return wren_font;
 
-	if (strcmp(signature, "static Tic.trace__(_,_)"             ) == 0) return wren_trace;
-
 	if (strcmp(signature, "static Tic.spr(_)"	                ) == 0) return wren_spr;
 	if (strcmp(signature, "static Tic.spr(_,_,_)"	            ) == 0) return wren_spr;
 	if (strcmp(signature, "static Tic.spr(_,_,_,_)"	            ) == 0) return wren_spr;
@@ -1077,8 +999,6 @@ WrenForeignMethodFn foreignTicMethods(const char* signature){
 	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_)"	        ) == 0) return wren_spr;
 	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_,_)"	    ) == 0) return wren_spr;
 	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_,_,_,_)"	) == 0) return wren_spr;
-
-	if (strcmp(signature, "static Tic.spr__(_,_,_,_,_,_,_)"	    ) == 0) return wren_spr_internal;
 
 	if (strcmp(signature, "static Tic.map(_,_)"	                ) == 0) return wren_map;
 	if (strcmp(signature, "static Tic.map(_,_,_,_)"	            ) == 0) return wren_map;
@@ -1090,7 +1010,6 @@ WrenForeignMethodFn foreignTicMethods(const char* signature){
 	if (strcmp(signature, "static Tic.mset(_,_)"	            ) == 0) return wren_mset;
 	if (strcmp(signature, "static Tic.mset(_,_,_)"	            ) == 0) return wren_mset;
 	if (strcmp(signature, "static Tic.mget(_,_)"	            ) == 0) return wren_mget;
-	if (strcmp(signature, "static Tic.mgeti__(_)"                 ) == 0) return wren_mgeti;
 
 	if (strcmp(signature, "static Tic.textri(_,_,_,_,_,_,_,_,_,_,_,_)"	     ) == 0) return wren_textri;
 	if (strcmp(signature, "static Tic.textri(_,_,_,_,_,_,_,_,_,_,_,_,_)"	 ) == 0) return wren_textri;
@@ -1132,6 +1051,15 @@ WrenForeignMethodFn foreignTicMethods(const char* signature){
 	if (strcmp(signature, "static Tic.time()"    			    ) == 0) return wren_time;
 	if (strcmp(signature, "static Tic.sync()"    			    ) == 0) return wren_sync;
 	if (strcmp(signature, "static Tic.exit()"    			    ) == 0) return wren_exit;
+
+	// internal functions
+	if (strcmp(signature, "static Tic.map_width__"                ) == 0) return wren_map_width;
+	if (strcmp(signature, "static Tic.map_height__"               ) == 0) return wren_map_height;
+	if (strcmp(signature, "static Tic.spritesize__"               ) == 0) return wren_spritesize;
+	if (strcmp(signature, "static Tic.print__(_,_,_,_,_,_)"     ) == 0) return wren_print;
+	if (strcmp(signature, "static Tic.trace__(_,_)"             ) == 0) return wren_trace;
+	if (strcmp(signature, "static Tic.spr__(_,_,_,_,_,_,_)"	    ) == 0) return wren_spr_internal;
+	if (strcmp(signature, "static Tic.mgeti__(_)"                 ) == 0) return wren_mgeti;
 
 	return NULL;
 }
