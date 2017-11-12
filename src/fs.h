@@ -67,11 +67,7 @@ bool fsCopyFile(const char* src, const char* dst);
 void fsGetFileData(GetCallback callback, const char* name, void* buffer, size_t size, u32 mode, void* data);
 void fsOpenFileData(OpenCallback callback, void* data);
 void fsOpenWorkingFolder(FileSystem* fs);
-#if defined(__EMSCRIPTEN__)
-void fsOpenSystemPath(FileSystem* fs, const char* path);
-#else
-int fsOpenSystemPath(FileSystem* fs, const char* path);
-#endif
+s32 fsOpenSystemPath(FileSystem* fs, const char* path);
 bool fsIsDir(FileSystem* fs, const char* dir);
 bool fsIsInPublicDir(FileSystem* fs);
 bool fsChangeDir(FileSystem* fs, const char* dir);
