@@ -36,190 +36,190 @@ static WrenHandle* scanline_handle;
 
 static bool loaded = false;
 
-static char const* tic_wren_api = "                         			                            \n\
-System.importModule(\"random\")                         				                            \n\
-var Rnd = System.getModuleVariable(\"random\", \"Random\")  			                            \n\
-class Random {                                        					                            \n\
-	static init_() {                                  					                            \n\
-		__rnd = Rnd.new()                             					                            \n\
-	}                                                 					                            \n\
-	static seed() {__rnd.seed_()}                     					                            \n\
-	static seed(n) {__rnd.seed_(n)}                   					                            \n\
-	static int(){__rnd.int()}                         					                            \n\
-	static int(end){__rnd.int(end)}                   					                            \n\
-	static int(start, end){__rnd.int(start, end)}     					                            \n\
-	static float(){__rnd.float()}                     					                            \n\
-	static float(end){__rnd.float(end)}               					                            \n\
-	static float(start, end){__rnd.float(start, end)} 					                            \n\
-	static bool(){__rnd.float() < 0.5}                					                            \n\
-	static bool(chance){__rnd.float() < chance}       					                            \n\
-	static sign(){                                    					                            \n\
-		if (__rnd.float() < 0.5) {                    					                            \n\
-			return -1                                 					                            \n\
-		}                                             					                            \n\
-		return 1                                      					                            \n\
-	}                                                 					                            \n\
-	static sign(chance){                              					                            \n\
-		if (__rnd.float() < chance) {                 					                            \n\
-			return -1                                 					                            \n\
-		}                                             					                            \n\
-		return 1                                      					                            \n\
-	}                                                 					                            \n\
-	static bit(){                                     					                            \n\
-		if (__rnd.float() < 0.5) {                    					                            \n\
-			return 0                                  					                            \n\
-		}                                             					                            \n\
-		return 1                                      					                            \n\
-	}                                                 					                            \n\
-	static bit(chance){                               					                            \n\
-		if (__rnd.float() < chance) {                 					                            \n\
-			return 0                                  					                            \n\
-		}                                             					                            \n\
-		return 1                                      					                            \n\
-	}                                                 					                            \n\
-	static shuffle(list){__rnd.shuffle(list)}         			    	                            \n\
-}                                                     		        	                            \n\
-class Maths {                                                       	                            \n\
-	static lerp( value, target, t ) {                               	                            \n\
-		t = Maths.clamp(t, 0, 1)                                    	                            \n\
-		return (value + t * (target - value))                       	                            \n\
-	}                                                               	                            \n\
-	static clamp(value, a, b) {                                     	                            \n\
-		return ( value < a ) ? a : ( ( value > b ) ? b : value )    	                            \n\
-	}                                                               	                            \n\
-	static clamp_bottom(value, a, b) {                              	                            \n\
-		return value < a ? a : value                                	                            \n\
-	}                                                               	                            \n\
-	static within_range(value, start_range, end_range) {            	                            \n\
-		return value >= start_range && value <= end_range           	                            \n\
-	}                                                               	                            \n\
-	static sign( x ) {                                              	                            \n\
-		return (x >= 0) ? 1 : -1                                    	                            \n\
-	}                                                               	                            \n\
-	static sign0( x ) {                                             	                            \n\
-		return (x < 0) ? -1 : ((x > 0) ? 1 : 0)                     	                            \n\
-	}                                                               	                            \n\
-	static radians( degrees ) {                                     	                            \n\
-		return degrees * 0.017453292519943 // degrees * _PI_OVER_180	                            \n\
-	}                                                               	                            \n\
-	static degrees( radians ) {                                     	                            \n\
-		return radians * 57.295779513082 // degrees * _180_OVER_PI  	                            \n\
-	}                                                               	                            \n\
-}                                                                   	                            \n\
-class Tic {                                                                                     	\n\
-	foreign static map_width                                                                    	\n\
-	foreign static map_height                                                                   	\n\
-	foreign static spritesize                                                                   	\n\
-	foreign static btn(id)                                                                      	\n\
-	foreign static btnp(id, hold, period)                                                       	\n\
-	foreign static mouse()                                                                      	\n\
-	foreign static print__(v, x, y, color, fixed, scale)                                        	\n\
-	foreign static font(text)                                                                   	\n\
-	foreign static font(text, x, y)                                                             	\n\
-	foreign static font(text, x, y, alpha_color)                                                	\n\
-	foreign static font(text, x, y, alpha_color, w, h)                                          	\n\
-	foreign static font(text, x, y, alpha_color, w, h, fixed)                                   	\n\
-	foreign static font(text, x, y, alpha_color, w, h, fixed, scale)                            	\n\
-	foreign static trace__(msg, color)                                                          	\n\
-	foreign static spr(id)                                                                      	\n\
-	foreign static spr(id, x, y)                                                                	\n\
-	foreign static spr(id, x, y, alpha_color)                                                   	\n\
-	foreign static spr(id, x, y, alpha_color, scale)                                            	\n\
-	foreign static spr(id, x, y, alpha_color, scale, flip)                                      	\n\
-	foreign static spr(id, x, y, alpha_color, scale, flip, rotate)                              	\n\
-	foreign static spr(id, x, y, alpha_color, scale, flip, rotate, cell_width, cell_height)     	\n\
-	foreign static spr__(id, x, y, alpha_color, scale, flip, rotate)                            	\n\
-	foreign static map(cell_x, cell_y)                                                          	\n\
-	foreign static map(cell_x, cell_y, cell_w, cell_h)                                          	\n\
-	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y)                                    	\n\
-	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color)                       	\n\
-	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color, scale)                	\n\
-	foreign static mset(cell_x, cell_y)                                                             \n\
-	foreign static mset(cell_x, cell_y, index)                                                      \n\
-	foreign static mget(cell_x, cell_y)                                                             \n\
-	foreign static mgeti(index)                                                                     \n\
-	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3)                           \n\
-	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3, use_map)                  \n\
-	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3, use_map, alpha_color)     \n\
-	foreign static pix(x, y)                                                                        \n\
-	foreign static pix(x, y, color)                                                                 \n\
-	foreign static line(x0, y0, x1, y1, color)                                                      \n\
-	foreign static circ(x, y, radius, color)                                                        \n\
-	foreign static circb(x, y, radius, color)                                                       \n\
-	foreign static rect(x, y, w, h, color)                                                          \n\
-	foreign static rectb(x, y, w, h, color)                                                         \n\
-	foreign static tri(x1, y1, x2, y2, x3, y3, color)                                               \n\
-	foreign static cls()                                                                            \n\
-	foreign static cls(color)                                                                       \n\
-	foreign static clip()                                                                           \n\
-	foreign static clip(x, y, w, h)                                                                 \n\
-	foreign static peek(addr)                                                                       \n\
-	foreign static poke(addr, val)                                                                  \n\
-	foreign static peek4(addr)                                                                      \n\
-	foreign static poke4(addr, val)                                                                 \n\
-	foreign static memcpy(dst, src, size)                                                           \n\
-	foreign static memset(dst, src, size)                                                           \n\
-	foreign static pmem(index, val)                                                                 \n\
-	foreign static sfx(id)                                                                          \n\
-	foreign static sfx(id, note)                                                                    \n\
-	foreign static sfx(id, note, duration)                                                          \n\
-	foreign static sfx(id, note, duration, channel)                                                 \n\
-	foreign static sfx(id, note, duration, channel, volume)                                         \n\
-	foreign static sfx(id, note, duration, channel, volume, speed)                                  \n\
-	foreign static music()                                                                          \n\
-	foreign static music(track)                                                                     \n\
-	foreign static music(track, frame)                                                              \n\
-	foreign static music(track, frame, loop)                                                        \n\
-	foreign static time()                                                                           \n\
-	foreign static sync()                                                                           \n\
-	foreign static exit()                                                                           \n\
-	static print(v) { Tic.print__(v.toString, 0, 0, 15, false, 1) }                             	\n\
-	static print(v,x,y) { Tic.print__(v.toString, x, y, 15, false, 1) }                         	\n\
-	static print(v,x,y,color) { Tic.print__(v.toString, x, y, color, false, 1) }                	\n\
-	static print(v,x,y,color,fixed) { Tic.print__(v.toString, x, y, color, fixed, 1) }          	\n\
-	static print(v,x,y,color,fixed,scale) { Tic.print__(v.toString, x, y, color, fixed, scale) }	\n\
-	static trace(v) { Tic.trace__(v.toString, 15) }                                             	\n\
-	static trace(v,color) { Tic.trace__(v.toString, color) }                                    	\n\
-	static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color, scale, remap) {               	\n\
-		var map_w = Tic.map_width                                                               	\n\
-		var map_h = Tic.map_height                                                              	\n\
-		var size = Tic.spritesize * scale                                                       	\n\
-		var jj = y                                                                              	\n\
-		var ii = x                                                                              	\n\
-		var flip = 0                                                                            	\n\
-		var rotate = 0                                                                          	\n\
-		for (j in cell_y...cell_y+cell_h) {                                                     	\n\
-			ii = x                                                                              	\n\
-			for (i in cell_x...cell_x+cell_w) {                                                 	\n\
-				var mi = i                                                                      	\n\
-				var mj = j                                                                      	\n\
-				while(mi < 0) mi = mi + map_w                                                   	\n\
-				while(mj < 0) mj = mj + map_h                                                   	\n\
-				while(mi >= map_w) mi = mi - map_w                                              	\n\
-				while(mj >= map_h) mj = mj - map_h                                              	\n\
-				var index = mi + mj * map_w                                                     	\n\
-				var tile_index = Tic.mgeti(index)                                            	    \n\
-				var ret = remap.call(tile_index)                                                	\n\
-				if (ret.type == List) {                                                         	\n\
-					tile_index = ret[0]                                                         	\n\
-					flip = ret[1]                                                               	\n\
-					rotate = ret[2]                                                             	\n\
-				} else if (ret.type == Num) {                                                   	\n\
-					tile_index = ret                                                            	\n\
-				}                                                                               	\n\
-				Tic.spr__(tile_index, ii, jj, alpha_color, scale, flip, rotate)                 	\n\
-				ii = ii + size                                                                  	\n\
-			}                                                                                   	\n\
-			jj = jj + size                                                                      	\n\
-		}                                                                                       	\n\
-	}                                                                                           	\n\
-}                                                                                               	\n\
-class Engine {                                                                                  	\n\
-	update(){}                                                                                  	\n\
-	scanline(row){}                                                                             	\n\
-}                                                                                               	\n\
-Random.init_()                                                                                  	\n\
-";
+static char const* tic_wren_api = "                         			                            \n"
+"System.importModule(\"random\")                         				                            \n"
+"var Rnd = System.getModuleVariable(\"random\", \"Random\")  			                            \n"
+"class Random {                                        					                            \n"
+"	static init_() {                                  					                            \n"
+"		__rnd = Rnd.new()                             					                            \n"
+"	}                                                 					                            \n"
+"	static seed() {__rnd.seed_()}                     					                            \n"
+"	static seed(n) {__rnd.seed_(n)}                   					                            \n"
+"	static int(){__rnd.int()}                         					                            \n"
+"	static int(end){__rnd.int(end)}                   					                            \n"
+"	static int(start, end){__rnd.int(start, end)}     					                            \n"
+"	static float(){__rnd.float()}                     					                            \n"
+"	static float(end){__rnd.float(end)}               					                            \n"
+"	static float(start, end){__rnd.float(start, end)} 					                            \n"
+"	static bool(){__rnd.float() < 0.5}                					                            \n"
+"	static bool(chance){__rnd.float() < chance}       					                            \n"
+"	static sign(){                                    					                            \n"
+"		if (__rnd.float() < 0.5) {                    					                            \n"
+"			return -1                                 					                            \n"
+"		}                                             					                            \n"
+"		return 1                                      					                            \n"
+"	}                                                 					                            \n"
+"	static sign(chance){                              					                            \n"
+"		if (__rnd.float() < chance) {                 					                            \n"
+"			return -1                                 					                            \n"
+"		}                                             					                            \n"
+"		return 1                                      					                            \n"
+"	}                                                 					                            \n"
+"	static bit(){                                     					                            \n"
+"		if (__rnd.float() < 0.5) {                    					                            \n"
+"			return 0                                  					                            \n"
+"		}                                             					                            \n"
+"		return 1                                      					                            \n"
+"	}                                                 					                            \n"
+"	static bit(chance){                               					                            \n"
+"		if (__rnd.float() < chance) {                 					                            \n"
+"			return 0                                  					                            \n"
+"		}                                             					                            \n"
+"		return 1                                      					                            \n"
+"	}                                                 					                            \n"
+"	static shuffle(list){__rnd.shuffle(list)}         			    	                            \n"
+"}                                                     		        	                            \n"
+"class Maths {                                                       	                            \n"
+"	static lerp( value, target, t ) {                               	                            \n"
+"		t = Maths.clamp(t, 0, 1)                                    	                            \n"
+"		return (value + t * (target - value))                       	                            \n"
+"	}                                                               	                            \n"
+"	static clamp(value, a, b) {                                     	                            \n"
+"		return ( value < a ) ? a : ( ( value > b ) ? b : value )    	                            \n"
+"	}                                                               	                            \n"
+"	static clamp_bottom(value, a, b) {                              	                            \n"
+"		return value < a ? a : value                                	                            \n"
+"	}                                                               	                            \n"
+"	static within_range(value, start_range, end_range) {            	                            \n"
+"		return value >= start_range && value <= end_range           	                            \n"
+"	}                                                               	                            \n"
+"	static sign( x ) {                                              	                            \n"
+"		return (x >= 0) ? 1 : -1                                    	                            \n"
+"	}                                                               	                            \n"
+"	static sign0( x ) {                                             	                            \n"
+"		return (x < 0) ? -1 : ((x > 0) ? 1 : 0)                     	                            \n"
+"	}                                                               	                            \n"
+"	static radians( degrees ) {                                     	                            \n"
+"		return degrees * 0.017453292519943 // degrees * _PI_OVER_180	                            \n"
+"	}                                                               	                            \n"
+"	static degrees( radians ) {                                     	                            \n"
+"		return radians * 57.295779513082 // degrees * _180_OVER_PI  	                            \n"
+"	}                                                               	                            \n"
+"}                                                                   	                            \n"
+"class Tic {                                                                                     	\n"
+"	foreign static map_width                                                                    	\n"
+"	foreign static map_height                                                                   	\n"
+"	foreign static spritesize                                                                   	\n"
+"	foreign static btn(id)                                                                      	\n"
+"	foreign static btnp(id, hold, period)                                                       	\n"
+"	foreign static mouse()                                                                      	\n"
+"	foreign static print__(v, x, y, color, fixed, scale)                                        	\n"
+"	foreign static font(text)                                                                   	\n"
+"	foreign static font(text, x, y)                                                             	\n"
+"	foreign static font(text, x, y, alpha_color)                                                	\n"
+"	foreign static font(text, x, y, alpha_color, w, h)                                          	\n"
+"	foreign static font(text, x, y, alpha_color, w, h, fixed)                                   	\n"
+"	foreign static font(text, x, y, alpha_color, w, h, fixed, scale)                            	\n"
+"	foreign static trace__(msg, color)                                                          	\n"
+"	foreign static spr(id)                                                                      	\n"
+"	foreign static spr(id, x, y)                                                                	\n"
+"	foreign static spr(id, x, y, alpha_color)                                                   	\n"
+"	foreign static spr(id, x, y, alpha_color, scale)                                            	\n"
+"	foreign static spr(id, x, y, alpha_color, scale, flip)                                      	\n"
+"	foreign static spr(id, x, y, alpha_color, scale, flip, rotate)                              	\n"
+"	foreign static spr(id, x, y, alpha_color, scale, flip, rotate, cell_width, cell_height)     	\n"
+"	foreign static spr__(id, x, y, alpha_color, scale, flip, rotate)                            	\n"
+"	foreign static map(cell_x, cell_y)                                                          	\n"
+"	foreign static map(cell_x, cell_y, cell_w, cell_h)                                          	\n"
+"	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y)                                    	\n"
+"	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color)                       	\n"
+"	foreign static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color, scale)                	\n"
+"	foreign static mset(cell_x, cell_y)                                                             \n"
+"	foreign static mset(cell_x, cell_y, index)                                                      \n"
+"	foreign static mget(cell_x, cell_y)                                                             \n"
+"	foreign static mgeti__(index)                                                                   \n"
+"	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3)                           \n"
+"	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3, use_map)                  \n"
+"	foreign static textri(x1, y1, x2, y2, x3, y3, u1, v1, u2, v2, u3, v3, use_map, alpha_color)     \n"
+"	foreign static pix(x, y)                                                                        \n"
+"	foreign static pix(x, y, color)                                                                 \n"
+"	foreign static line(x0, y0, x1, y1, color)                                                      \n"
+"	foreign static circ(x, y, radius, color)                                                        \n"
+"	foreign static circb(x, y, radius, color)                                                       \n"
+"	foreign static rect(x, y, w, h, color)                                                          \n"
+"	foreign static rectb(x, y, w, h, color)                                                         \n"
+"	foreign static tri(x1, y1, x2, y2, x3, y3, color)                                               \n"
+"	foreign static cls()                                                                            \n"
+"	foreign static cls(color)                                                                       \n"
+"	foreign static clip()                                                                           \n"
+"	foreign static clip(x, y, w, h)                                                                 \n"
+"	foreign static peek(addr)                                                                       \n"
+"	foreign static poke(addr, val)                                                                  \n"
+"	foreign static peek4(addr)                                                                      \n"
+"	foreign static poke4(addr, val)                                                                 \n"
+"	foreign static memcpy(dst, src, size)                                                           \n"
+"	foreign static memset(dst, src, size)                                                           \n"
+"	foreign static pmem(index, val)                                                                 \n"
+"	foreign static sfx(id)                                                                          \n"
+"	foreign static sfx(id, note)                                                                    \n"
+"	foreign static sfx(id, note, duration)                                                          \n"
+"	foreign static sfx(id, note, duration, channel)                                                 \n"
+"	foreign static sfx(id, note, duration, channel, volume)                                         \n"
+"	foreign static sfx(id, note, duration, channel, volume, speed)                                  \n"
+"	foreign static music()                                                                          \n"
+"	foreign static music(track)                                                                     \n"
+"	foreign static music(track, frame)                                                              \n"
+"	foreign static music(track, frame, loop)                                                        \n"
+"	foreign static time()                                                                           \n"
+"	foreign static sync()                                                                           \n"
+"	foreign static exit()                                                                           \n"
+"	static print(v) { Tic.print__(v.toString, 0, 0, 15, false, 1) }                             	\n"
+"	static print(v,x,y) { Tic.print__(v.toString, x, y, 15, false, 1) }                         	\n"
+"	static print(v,x,y,color) { Tic.print__(v.toString, x, y, color, false, 1) }                	\n"
+"	static print(v,x,y,color,fixed) { Tic.print__(v.toString, x, y, color, fixed, 1) }          	\n"
+"	static print(v,x,y,color,fixed,scale) { Tic.print__(v.toString, x, y, color, fixed, scale) }	\n"
+"	static trace(v) { Tic.trace__(v.toString, 15) }                                             	\n"
+"	static trace(v,color) { Tic.trace__(v.toString, color) }                                    	\n"
+"	static map(cell_x, cell_y, cell_w, cell_h, x, y, alpha_color, scale, remap) {               	\n"
+"		var map_w = Tic.map_width                                                               	\n"
+"		var map_h = Tic.map_height                                                              	\n"
+"		var size = Tic.spritesize * scale                                                       	\n"
+"		var jj = y                                                                              	\n"
+"		var ii = x                                                                              	\n"
+"		var flip = 0                                                                            	\n"
+"		var rotate = 0                                                                          	\n"
+"		for (j in cell_y...cell_y+cell_h) {                                                     	\n"
+"			ii = x                                                                              	\n"
+"			for (i in cell_x...cell_x+cell_w) {                                                 	\n"
+"				var mi = i                                                                      	\n"
+"				var mj = j                                                                      	\n"
+"				while(mi < 0) mi = mi + map_w                                                   	\n"
+"				while(mj < 0) mj = mj + map_h                                                   	\n"
+"				while(mi >= map_w) mi = mi - map_w                                              	\n"
+"				while(mj >= map_h) mj = mj - map_h                                              	\n"
+"				var index = mi + mj * map_w                                                     	\n"
+"				var tile_index = Tic.mgeti__(index)                                            	    \n"
+"				var ret = remap.call(tile_index)                                                	\n"
+"				if (ret.type == List) {                                                         	\n"
+"					tile_index = ret[0]                                                         	\n"
+"					flip = ret[1]                                                               	\n"
+"					rotate = ret[2]                                                             	\n"
+"				} else if (ret.type == Num) {                                                   	\n"
+"					tile_index = ret                                                            	\n"
+"				}                                                                               	\n"
+"				Tic.spr__(tile_index, ii, jj, alpha_color, scale, flip, rotate)                 	\n"
+"				ii = ii + size                                                                  	\n"
+"			}                                                                                   	\n"
+"			jj = jj + size                                                                      	\n"
+"		}                                                                                       	\n"
+"	}                                                                                           	\n"
+"}                                                                                               	\n"
+"class Engine {                                                                                  	\n"
+"	update(){}                                                                                  	\n"
+"	scanline(row){}                                                                             	\n"
+"}                                                                                               	\n"
+"Random.init_()                                                                                  	\n"
+"";
 
 static inline s32 getWrenNumber(WrenVM* vm, s32 index)
 {
@@ -472,7 +472,7 @@ static void wren_trace(WrenVM* vm)
 	machine->data->trace(machine->data->data, text, color);
 }
 
-static void wren_spr_ex(WrenVM* vm)
+static void wren_spr(WrenVM* vm)
 {	
 	s32 top = wrenGetSlotCount(vm);
 
@@ -1070,13 +1070,13 @@ WrenForeignMethodFn foreignTicMethods(const char* signature){
 
 	if (strcmp(signature, "static Tic.trace__(_,_)"             ) == 0) return wren_trace;
 
-	if (strcmp(signature, "static Tic.spr(_)"	                ) == 0) return wren_spr_ex;
-	if (strcmp(signature, "static Tic.spr(_,_,_)"	            ) == 0) return wren_spr_ex;
-	if (strcmp(signature, "static Tic.spr(_,_,_,_)"	            ) == 0) return wren_spr_ex;
-	if (strcmp(signature, "static Tic.spr(_,_,_,_,_)"	        ) == 0) return wren_spr_ex;
-	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_)"	        ) == 0) return wren_spr_ex;
-	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_,_)"	    ) == 0) return wren_spr_ex;
-	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_,_,_,_)"	) == 0) return wren_spr_ex;
+	if (strcmp(signature, "static Tic.spr(_)"	                ) == 0) return wren_spr;
+	if (strcmp(signature, "static Tic.spr(_,_,_)"	            ) == 0) return wren_spr;
+	if (strcmp(signature, "static Tic.spr(_,_,_,_)"	            ) == 0) return wren_spr;
+	if (strcmp(signature, "static Tic.spr(_,_,_,_,_)"	        ) == 0) return wren_spr;
+	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_)"	        ) == 0) return wren_spr;
+	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_,_)"	    ) == 0) return wren_spr;
+	if (strcmp(signature, "static Tic.spr(_,_,_,_,_,_,_,_,_)"	) == 0) return wren_spr;
 
 	if (strcmp(signature, "static Tic.spr__(_,_,_,_,_,_,_)"	    ) == 0) return wren_spr_internal;
 
@@ -1090,7 +1090,7 @@ WrenForeignMethodFn foreignTicMethods(const char* signature){
 	if (strcmp(signature, "static Tic.mset(_,_)"	            ) == 0) return wren_mset;
 	if (strcmp(signature, "static Tic.mset(_,_,_)"	            ) == 0) return wren_mset;
 	if (strcmp(signature, "static Tic.mget(_,_)"	            ) == 0) return wren_mget;
-	if (strcmp(signature, "static Tic.mgeti(_)"                 ) == 0) return wren_mgeti;
+	if (strcmp(signature, "static Tic.mgeti__(_)"                 ) == 0) return wren_mgeti;
 
 	if (strcmp(signature, "static Tic.textri(_,_,_,_,_,_,_,_,_,_,_,_)"	     ) == 0) return wren_textri;
 	if (strcmp(signature, "static Tic.textri(_,_,_,_,_,_,_,_,_,_,_,_,_)"	 ) == 0) return wren_textri;
