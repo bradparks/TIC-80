@@ -648,7 +648,7 @@ static void onConsoleNewCommandConfirmed(Console* console, const char* param)
 			loadDemo(console, tic_script_moon);
 		else if(strcmp(param, "js") == 0 || strcmp(param, "javascript") == 0)
 			loadDemo(console, tic_script_js);
-		else if(strcmp(param, "wren"))
+		else if(strcmp(param, "wren") == 0)
 			loadDemo(console, tic_script_wren);
 		else
 		{
