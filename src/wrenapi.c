@@ -39,6 +39,7 @@ static bool loaded = false;
 static char const* tic_wren_api = "                         			                            \n"
 "class Tic {                                                                                     	\n"
 "	foreign static btn(id)                                                                      	\n"
+"	foreign static btnp(id)                                                       					\n"
 "	foreign static btnp(id, hold, period)                                                       	\n"
 "	foreign static mouse()                                                                      	\n"
 "	foreign static font(text)                                                                   	\n"
@@ -982,6 +983,7 @@ static void wren_exit(WrenVM* vm)
 WrenForeignMethodFn foreignTicMethods(const char* signature){
 
 	if (strcmp(signature, "static Tic.btn(_)"                	) == 0) return wren_btn;
+	if (strcmp(signature, "static Tic.btnp(_)"                  ) == 0) return wren_btnp;
 	if (strcmp(signature, "static Tic.btnp(_,_,_)"              ) == 0) return wren_btnp;
 	if (strcmp(signature, "static Tic.mouse()"                	) == 0) return wren_mouse;
 
